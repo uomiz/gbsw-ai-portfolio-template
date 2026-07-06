@@ -13,6 +13,10 @@ import json
 from typing import List, Dict, Any
 from pathlib import Path
 
+# ChromaDB의 익명 telemetry는 posthog 버전 조합에 따라 경고를 낼 수 있습니다.
+os.environ.setdefault("ANONYMIZED_TELEMETRY", "False")
+
+from chromadb.config import Settings
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -21,7 +25,10 @@ from langchain.schema import Document
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 
-from prompts import BASELINE_SYSTEM_PROMPT, QA_PROMPT_TEMPLATE
+try:
+    from .prompts import BASELINE_SYSTEM_PROMPT, QA_PROMPT_TEMPLATE
+except ImportError:
+    from prompts import BASELINE_SYSTEM_PROMPT, QA_PROMPT_TEMPLATE
 
 
 class RAGEngine:
@@ -82,6 +89,10 @@ class RAGEngine:
         self.vectorstore = None
         self.qa_chain = None
 
+    def _chroma_client_settings(self) -> Settings:
+        """ChromaDB telemetry를 끈 클라이언트 설정."""
+        return Settings(anonymized_telemetry=False)
+
     def load_projects(self) -> List[Document]:
         """
         projects.json을 로드하여 LangChain Document 형식으로 변환
@@ -135,7 +146,8 @@ class RAGEngine:
         self.vectorstore = Chroma.from_documents(
             documents=splits,
             embedding=self.embeddings,
-            persist_directory=self.persist_directory
+            persist_directory=self.persist_directory,
+            client_settings=self._chroma_client_settings()
         )
         print(f"✅ 벡터 스토어 구축 완료: {self.persist_directory}")
 
@@ -222,7 +234,8 @@ class RAGEngine:
         print(f"📂 기존 벡터 DB 로드: {persist_directory}")
         instance.vectorstore = Chroma(
             persist_directory=persist_directory,
-            embedding_function=instance.embeddings
+            embedding_function=instance.embeddings,
+            client_settings=instance._chroma_client_settings()
         )
         instance.build_qa_chain()
         return instance
