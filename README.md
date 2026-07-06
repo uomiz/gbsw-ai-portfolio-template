@@ -52,15 +52,27 @@ cd YOUR_REPO
 ### 3️⃣ 환경 설정
 
 ```bash
-# Python 가상환경 생성
-python3 -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+# Python 가상환경 생성 (환경에 맞게 선택)
+python3 -m venv .venv      # macOS/Linux
+# 또는
+python -m venv .venv       # Windows (대부분)
+# 또는
+py -m venv .venv          # Windows (Microsoft Store 설치)
+
+# 가상환경 활성화
+source .venv/bin/activate  # macOS/Linux
+# 또는
+.venv\Scripts\activate     # Windows CMD
+# 또는
+.venv\Scripts\Activate.ps1 # Windows PowerShell
 
 # 의존성 설치
 pip install -r requirements.txt
 
 # API 키 설정
-cp .env.example .env
+cp .env.example .env       # macOS/Linux
+# 또는
+copy .env.example .env     # Windows
 # .env 파일을 열어 GEMINI_API_KEY 입력
 ```
 
