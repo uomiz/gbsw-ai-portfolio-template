@@ -1,0 +1,28 @@
+# 환경 변수
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# 가상환경
+.venv/
+venv/
+ENV/
+examples/
+
+# ChromaDB
+chroma_db/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 기타
+.DS_Store
+*.log
