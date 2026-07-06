@@ -13,7 +13,10 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from rag_core import build_rag_engine
+try:
+    from .rag_core import build_rag_engine
+except ImportError:
+    from rag_core import build_rag_engine
 
 # 환경변수 로드
 load_dotenv()

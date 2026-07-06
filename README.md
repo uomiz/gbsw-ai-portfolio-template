@@ -23,11 +23,11 @@ AI 기반 포트폴리오 웹사이트 + RAG 챗봇 실습 템플릿
 
 | 단계 | 내용 | 문서 | 예상 시간 |
 |:---:|------|------|:---:|
-| **0** | 전체 개요 및 아키텍처 이해 | [docs/00-OVERVIEW.md](docs/00-OVERVIEW.md) | 30분 |
-| **1** | 프로젝트 데이터 구축 | [docs/01-DATA.md](docs/01-DATA.md) | 2시간 |
-| **2** | 포트폴리오 웹앱 제작 | [docs/02-WEBAPP.md](docs/02-WEBAPP.md) | 4시간 |
-| **3** | RAG 챗봇 구축 및 튜닝 | [docs/03-RAG.md](docs/03-RAG.md) | 6시간 |
-| **4** | 배포 및 연동 | [docs/04-DEPLOY.md](docs/04-DEPLOY.md) | 2시간 |
+| **0** | 전체 개요 및 아키텍처 이해 | [docs/00-OVERVIEW.md](docs/00-OVERVIEW.md) | 
+| **1** | 프로젝트 데이터 구축 | [docs/01-DATA.md](docs/01-DATA.md) | 
+| **2** | 포트폴리오 웹앱 제작 | [docs/02-WEBAPP.md](docs/02-WEBAPP.md) | 
+| **3** | RAG 챗봇 구축 및 튜닝 | [docs/03-RAG.md](docs/03-RAG.md) | 
+| **4** | 배포 및 연동 | [docs/04-DEPLOY.md](docs/04-DEPLOY.md) | 
 
 ### 참고 문서
 - [SPEC-ARCHITECTURE.md](docs/SPEC-ARCHITECTURE.md) - 전체 아키텍처 명세
@@ -52,15 +52,27 @@ cd YOUR_REPO
 ### 3️⃣ 환경 설정
 
 ```bash
-# Python 가상환경 생성
-python3 -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+# Python 가상환경 생성 (환경에 맞게 선택)
+python3 -m venv .venv      # macOS/Linux
+# 또는
+python -m venv .venv       # Windows (대부분)
+# 또는
+py -m venv .venv          # Windows (Microsoft Store 설치)
+
+# 가상환경 활성화
+source .venv/bin/activate  # macOS/Linux
+# 또는
+.venv\Scripts\activate     # Windows CMD
+# 또는
+.venv\Scripts\Activate.ps1 # Windows PowerShell
 
 # 의존성 설치
 pip install -r requirements.txt
 
 # API 키 설정
-cp .env.example .env
+cp .env.example .env       # macOS/Linux
+# 또는
+copy .env.example .env     # Windows
 # .env 파일을 열어 GEMINI_API_KEY 입력
 ```
 
@@ -182,20 +194,6 @@ ai-portfolio-template/
 
 ---
 
-## 🎓 학습 목표
-
-이 실습을 통해 다음을 배웁니다:
-
-- [ ] RAG (Retrieval-Augmented Generation) 개념 및 구현
-- [ ] 벡터 DB를 활용한 의미 기반 검색
-- [ ] 프롬프트 엔지니어링 및 튜닝
-- [ ] LLM 출력 품질 평가 방법
-- [ ] FastAPI를 활용한 API 서버 구축
-- [ ] 정적 사이트와 API 서버 연동
-- [ ] GitHub Actions를 활용한 CI/CD
-- [ ] 무료 배포 환경 활용
-
----
 
 ## 🐛 문제 해결
 
