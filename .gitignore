@@ -21,6 +21,7 @@ chroma_db/
 
 # 빌드 결과물 (data/projects/에서 생성됨)
 data/projects.json
+web/data/projects.json
 
 # IDE
 .vscode/
