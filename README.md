@@ -69,7 +69,28 @@ cp .env.example .env
 - "Create API Key" 클릭
 - 발급된 키를 `.env` 파일에 붙여넣기
 
-### 4️⃣ 단계별 실습 시작
+### 4️⃣ 프로젝트 데이터 빌드
+
+```bash
+# 예시 프로젝트 확인
+ls data/projects/
+
+# projects.json 생성
+python3 data/build.py
+```
+
+출력:
+```
+📂 2개의 프로젝트 폴더를 발견했습니다.
+
+✅ interlocutor-adaptation: Interlocutor Adaptation Dialogue System
+✅ persona-scheduling: Dynamic Persona Scheduling Framework
+
+🎉 성공! projects.json 파일이 생성되었습니다.
+   총 2개의 프로젝트가 포함되었습니다.
+```
+
+### 5️⃣ 단계별 실습 시작
 
 [docs/00-OVERVIEW.md](docs/00-OVERVIEW.md)부터 순서대로 진행하세요!
 
@@ -94,12 +115,14 @@ ai-portfolio-template/
 │   ├── SPEC-BACKEND.md         # 백엔드 명세
 │   └── REFERENCES.md           # 참고 자료
 │
-├── 📂 examples/                 # 🎨 웹앱 예시
-│   ├── web1/                   # 심플 버전
-│   └── web2/                   # 풀 기능 버전
-│
 ├── 📂 data/
-│   └── projects.json           # ⭐ 프로젝트 데이터 (Single Source of Truth)
+│   ├── 📂 projects/             # 📁 프로젝트 폴더 (각 프로젝트별 관리)
+│   │   ├── project-1/
+│   │   │   ├── project.json    # 프로젝트 메타데이터
+│   │   │   └── README.md       # 상세 설명 (선택)
+│   │   └── project-2/
+│   ├── build.py                 # 빌드 스크립트
+│   └── projects.json            # ⭐ 통합 데이터 (빌드 결과)
 │
 ├── 📂 web/                      # 🌐 포트폴리오 웹사이트
 │   ├── index.html
@@ -138,8 +161,9 @@ ai-portfolio-template/
 ## 💡 핵심 기능
 
 ### 1. 프로젝트 데이터 구조화
-- Markdown 또는 JSON으로 프로젝트 정보 작성
-- 검색 가능한 구조로 변환 (`data/projects.json`)
+- 각 프로젝트를 폴더로 관리 (`data/projects/프로젝트명/`)
+- `project.json`으로 메타데이터 작성
+- `build.py`로 통합 (`data/projects.json`)
 
 ### 2. 동적 포트폴리오 웹사이트
 - `projects.json`을 읽어 프로젝트 카드 자동 렌더링

@@ -12,10 +12,15 @@ __pycache__/
 .venv/
 venv/
 ENV/
+
+# 예시 파일 (학생용 참고자료, Git 추적 제외)
 examples/
 
 # ChromaDB
 chroma_db/
+
+# 빌드 결과물 (data/projects/에서 생성됨)
+data/projects.json
 
 # IDE
 .vscode/
@@ -26,3 +31,12 @@ chroma_db/
 # 기타
 .DS_Store
 *.log
+
+# 임시 파일
+README_tmp.html
+
+# 학습 자료 (용량 큰 파일)
+*.pdf
+*.mp4
+*.mov
+*.avi

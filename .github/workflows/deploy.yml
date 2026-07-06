@@ -27,6 +27,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Build projects.json
+        run: |
+          echo "🔨 프로젝트 데이터 빌드 중..."
+          python data/build.py
+
       - name: Run tests (optional)
         run: |
           echo "✅ 테스트 생략 (추후 추가 가능)"
@@ -49,6 +54,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Build projects.json
+        run: |
+          echo "🔨 프로젝트 데이터 빌드 중..."
+          python data/build.py
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
