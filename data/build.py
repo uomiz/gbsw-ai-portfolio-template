@@ -18,8 +18,10 @@ def build_projects_json():
 
     # 경로 설정
     data_dir = Path(__file__).parent
+    root_dir = data_dir.parent
     projects_dir = data_dir / "projects"
     output_file = data_dir / "projects.json"
+    web_output_file = root_dir / "web" / "data" / "projects.json"
 
     # projects/ 디렉토리가 없으면 에러
     if not projects_dir.exists():
@@ -82,7 +84,12 @@ def build_projects_json():
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(projects, f, ensure_ascii=False, indent=2)
 
+        web_output_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(web_output_file, "w", encoding="utf-8") as f:
+            json.dump(projects, f, ensure_ascii=False, indent=2)
+
         print(f"\n🎉 성공! {output_file.name} 파일이 생성되었습니다.")
+        print(f"   웹 배포용 파일: {web_output_file}")
         print(f"   총 {len(projects)}개의 프로젝트가 포함되었습니다.")
         return True
 
