@@ -39,7 +39,7 @@ GitHub Actions + Render + GitHub Pages를 활용한 자동 배포
 ### 1. 로컬 Git 초기화
 
 ```bash
-cd 00-ai-portfolio-template
+cd gbsw-ai-portfolio-template
 
 # Git 초기화 (아직 안 했다면)
 git init
