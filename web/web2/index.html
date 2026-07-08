@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>포트폴리오</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ── 상단 바 ──────────────────────────────────────── -->
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <span class="brand"><span class="brand-dot"></span>portfolio</span>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="테마 전환">
+        <span class="theme-ico">◐</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── 헤더: 프로필 자리 (app.js가 채움) ────────────── -->
+  <header class="site-header">
+    <div class="container">
+      <div class="avatar" id="profile-avatar">··</div>
+      <p class="eyebrow">// PORTFOLIO 2025</p>
+      <h1 id="profile-name">…</h1>
+      <p id="profile-role" class="role">…</p>
+      <p id="profile-summary" class="summary">…</p>
+      <div class="header-stats" id="header-stats"></div>
+    </div>
+  </header>
+
+  <!-- ── 메인: 프로젝트 카드 자리 (app.js가 채움) ──────── -->
+  <main class="container">
+    <div class="section-head">
+      <h2>프로젝트</h2>
+      <span id="project-count" class="count"></span>
+    </div>
+
+    <!-- 툴바: 검색 + 태그 필터 (app.js가 구동) -->
+    <div class="toolbar">
+      <div class="search">
+        <span class="search-ico">⌕</span>
+        <input id="search-input" type="text" placeholder="프로젝트 검색…" autocomplete="off" />
+        <button id="search-clear" class="search-clear" type="button" aria-label="지우기" hidden>×</button>
+      </div>
+      <div id="tag-filters" class="tag-filters"></div>
+    </div>
+
+    <!-- 카드가 여기에 동적 삽입됨 -->
+    <section id="project-grid" class="project-grid" aria-live="polite">
+      <p class="loading">불러오는 중…</p>
+    </section>
+
+    <!-- 검색 결과 없음 상태 -->
+    <div id="empty-state" class="empty-state" hidden>
+      <p class="empty-emoji">◍</p>
+      <p>조건에 맞는 프로젝트가 없습니다.</p>
+      <button id="reset-filters" class="ghost-btn" type="button">필터 초기화</button>
+    </div>
+  </main>
+
+  <!-- ── 푸터 ─────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 · projects.json 기반 정적 포트폴리오</p>
+      <p class="foot-note">Built with vanilla JS — no framework.</p>
+    </div>
+  </footer>
+
+  <!-- ── 챗봇 위젯 마운트 지점 (widget.js가 채움) ──────── -->
+  <div id="chat-widget-root"></div>
+
+  <script src="app.js"></script>
+  <script src="widget.js"></script>
+</body>
+</html>
