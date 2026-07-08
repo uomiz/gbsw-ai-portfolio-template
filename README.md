@@ -1,6 +1,7 @@
 # AI Portfolio RAG Chatbot Template
 
 AI 기반 포트폴리오 웹사이트 + RAG 챗봇 실습 템플릿
+---
 실습물 제출: [https://docs.google.com/forms/d/e/1FAIpQLSenkkjD6JUEGAgROGdxustARVBvQZUZcAQjAAtJ_sY-XKT8sQ/viewform?usp=dialog
 ](https://drive.google.com/drive/folders/1Q4XETWs883F66JH9K3y7YKxlPvGXFa6b)
 ---
