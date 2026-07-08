@@ -1,17 +1,497 @@
-# Step 5: 심화 프로젝트 아이디어
+# Step 5: 선택 심화 과제
 
+00~07 실습으로 RAG의 기본 흐름을 이해한 뒤, `server/` 코드를 자신의 프로젝트에 맞게 수정합니다.
 
+공통 과제:
 
+- `lessons/rag-handout/00_hello_llm.py` ~ `07_eval/` 실습 완료
+- `server/` 코드가 자신의 프로젝트 데이터 기반으로 답변하도록 수정
+- 자신의 웹사이트 챗봇에서 RAG 답변이 정상 동작하는지 확인
 
+이후 아래 선택 과제 중 **2개 이상**을 구현합니다.
 
-
-- 이 문서의 기능들은 **선택 사항**입니다
-- 모두 구현할 필요 없이 **관심 있는 1~2개**만 선택
-- 정답은 없으며, 자유롭게 실험하고 실패해도 괜찮습니다
+선택 과제는 그대로 구현해도 되고, 자신의 포트폴리오 주제에 맞게 변형해도 됩니다. 단, 제출할 때는 **무엇을 목표로 했고, 어떤 파일을 수정했으며, 실행 결과가 어떻게 보이는지** 설명해야 합니다.
 
 ---
 
-## 📂 분야별 심화 과제
+## 제출 기준
+
+선택 과제 2개 이상에 대해 다음을 제출합니다.
+
+```text
+1. 선택한 과제명
+2. 구현 목표
+3. 수정한 파일 목록
+4. 실행 방법
+5. 동작 결과 스크린샷 또는 짧은 영상
+6. 실패/어려웠던 점과 해결 방법
+```
+
+서버 기능을 추가한 경우에는 API 테스트 결과도 포함합니다.
+
+```bash
+curl http://127.0.0.1:8000/health
+curl -X POST http://127.0.0.1:8000/chat \
+  -H "Content-Type: application/json" \
+  -d '{"question": "프로젝트 중 FastAPI를 쓴 것은?"}'
+```
+
+---
+
+## 선택 과제 1: 질문 라우팅 시스템
+
+**난이도:** ⭐⭐⭐
+
+### 목표
+
+사용자 질문 유형에 따라 처리 방식을 다르게 나눕니다.
+
+- 프로젝트 질문: RAG 검색 후 답변
+- 일반 대화: 일반 LLM 답변
+- 포트폴리오에 없는 민감/개인 정보 질문: 보류 응답
+
+예시:
+
+```text
+질문: FastAPI를 쓴 프로젝트는?
+처리: RAG
+
+질문: 오늘 기분 좋게 코딩하려면?
+처리: 일반 LLM
+
+질문: 희망 연봉은 얼마야?
+처리: 보류 응답
+```
+
+### 산출물
+
+- 질문 라우팅 함수
+- 라우팅 결과가 포함된 API 응답
+- 웹 챗봇에서 라우팅 결과에 따른 답변 확인
+
+예상 응답:
+
+```json
+{
+  "answer": "FastAPI를 사용한 프로젝트는 급식 만족도 분석 서비스와 AI 자기소개서 피드백 도구입니다.",
+  "route": "rag",
+  "sources": ["급식 만족도 분석 서비스", "AI 자기소개서 피드백 도구"]
+}
+```
+
+### 구현 예상 파일
+
+- `server/api.py`
+- `server/rag_core.py`
+- `server/prompts.py`
+- `web/widget.js`
+
+### 구현 시나리오
+
+1. `classify_question(question)` 함수를 만듭니다.
+2. 질문에 `프로젝트`, `기술`, `포트폴리오`, `개발`, `성과` 등이 있으면 `rag`로 분류합니다.
+3. `연봉`, `주소`, `전화번호`, `성적`처럼 데이터에 없는 개인 정보는 `abstain`으로 분류합니다.
+4. 나머지는 `general`로 분류합니다.
+5. `/chat` 응답에 `route` 값을 함께 반환합니다.
+
+### 힌트
+
+```python
+def classify_question(question: str) -> str:
+    q = question.lower()
+
+    private_keywords = ["연봉", "주소", "전화번호", "성적", "주민등록"]
+    project_keywords = ["프로젝트", "기술", "포트폴리오", "개발", "성과", "역할"]
+
+    if any(keyword in q for keyword in private_keywords):
+        return "abstain"
+    if any(keyword in q for keyword in project_keywords):
+        return "rag"
+    return "general"
+```
+
+### 평가 기준
+
+- 프로젝트 질문이 RAG로 처리된다.
+- 일반 대화가 RAG 검색 없이 답변된다.
+- 데이터에 없는 민감 정보는 추측하지 않는다.
+- 응답에 현재 라우팅 결과가 표시된다.
+
+---
+
+## 선택 과제 2: 방명록 기록
+
+**난이도:** ⭐⭐
+
+### 목표
+
+방문자가 포트폴리오 주인에게 짧은 메시지를 남길 수 있게 합니다.
+
+예시:
+
+```text
+이름: 홍길동
+메시지: 프로젝트 설명이 잘 정리되어 있어서 좋았습니다.
+```
+
+### 산출물
+
+- 방명록 입력 UI
+- 방명록 저장 API
+- 방명록 목록 조회 API
+- 서버 재시작 후에도 기록이 남아 있는 저장 파일
+
+예상 API:
+
+```text
+POST /guestbook
+GET /guestbook
+```
+
+예상 저장 파일:
+
+```text
+data/guestbook.json
+```
+
+### 구현 예상 파일
+
+- `server/api.py`
+- `web/index.html`
+- `web/app.js`
+- `web/style.css`
+- `data/guestbook.json`
+
+### 구현 시나리오
+
+1. `data/guestbook.json` 파일을 만듭니다.
+2. `POST /guestbook`에서 이름과 메시지를 받아 JSON 파일에 추가합니다.
+3. `GET /guestbook`에서 저장된 메시지 목록을 반환합니다.
+4. 웹에 입력 폼과 메시지 목록 영역을 만듭니다.
+5. 메시지 등록 후 목록이 새로고침되게 만듭니다.
+
+### 힌트
+
+```python
+from pydantic import BaseModel
+from datetime import datetime
+
+class GuestbookEntry(BaseModel):
+    name: str
+    message: str
+
+@app.post("/guestbook")
+async def add_guestbook(entry: GuestbookEntry):
+    # 기존 JSON 읽기
+    # created_at 추가
+    # 다시 저장
+    return {"ok": True}
+```
+
+프론트엔드에서는 `fetch()`를 사용합니다.
+
+```javascript
+await fetch(`${API_BASE_URL}/guestbook`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ name, message })
+});
+```
+
+### 평가 기준
+
+- 새 메시지를 등록할 수 있다.
+- 등록한 메시지가 화면에 표시된다.
+- 서버를 재시작해도 메시지가 남아 있다.
+- 빈 이름/빈 메시지는 저장되지 않는다.
+
+---
+
+## 선택 과제 3: 프로젝트 좋아요와 조회수
+
+**난이도:** ⭐⭐
+
+### 목표
+
+각 프로젝트 카드에 조회수와 좋아요 수를 표시합니다.
+
+예시:
+
+```text
+감정 분석 웹앱
+조회수 12 · 좋아요 5
+```
+
+### 산출물
+
+- 프로젝트별 조회수 증가 기능
+- 프로젝트별 좋아요 증가 기능
+- 웹 카드에 숫자 표시
+- 서버에 숫자 저장
+
+예상 API:
+
+```text
+GET /stats
+POST /projects/{project_id}/view
+POST /projects/{project_id}/like
+```
+
+예상 저장 파일:
+
+```text
+data/project_stats.json
+```
+
+### 구현 예상 파일
+
+- `server/api.py`
+- `web/app.js`
+- `web/style.css`
+- `data/project_stats.json`
+
+### 구현 시나리오
+
+1. 프로젝트 `id`별로 `views`, `likes`를 저장합니다.
+2. 카드가 화면에 보이거나 클릭될 때 조회수를 증가시킵니다.
+3. 좋아요 버튼을 누르면 좋아요 수를 증가시킵니다.
+4. `GET /stats`로 모든 프로젝트의 통계를 가져와 카드에 표시합니다.
+
+### 힌트
+
+```json
+{
+  "sentiment-webapp": {
+    "views": 12,
+    "likes": 5
+  }
+}
+```
+
+```python
+@app.post("/projects/{project_id}/like")
+async def like_project(project_id: str):
+    stats = load_stats()
+    stats.setdefault(project_id, {"views": 0, "likes": 0})
+    stats[project_id]["likes"] += 1
+    save_stats(stats)
+    return stats[project_id]
+```
+
+### 평가 기준
+
+- 프로젝트별 숫자가 따로 저장된다.
+- 좋아요 버튼 클릭 시 숫자가 증가한다.
+- 조회수 증가 기준이 명확하다.
+- 새로고침 후에도 숫자가 유지된다.
+
+---
+
+## 선택 과제 4: GitHub API 연동 + Tool Use
+
+**난이도:** ⭐⭐⭐⭐
+
+### 목표
+
+GitHub API를 사용해 프로젝트 저장소의 최신 정보를 가져오고, 챗봇 답변에 활용합니다.
+
+예시 질문:
+
+```text
+내 GitHub 저장소 중 스타가 가장 많은 프로젝트는?
+최근 커밋이 있는 프로젝트는?
+이 프로젝트의 GitHub 언어 비율은?
+```
+
+### 산출물
+
+- GitHub 저장소 정보 조회 API
+- GitHub 데이터를 사용하는 챗봇 응답
+- 저장소 링크, 스타 수, 언어, 최근 업데이트 표시
+
+예상 API:
+
+```text
+GET /github/repos
+GET /github/repos/{owner}/{repo}
+```
+
+### 구현 예상 파일
+
+- `server/api.py`
+- `server/github_tool.py`
+- `server/rag_core.py` 또는 `server/prompts.py`
+- `web/app.js`
+
+### 구현 시나리오
+
+1. GitHub 사용자명을 `.env`에 저장합니다.
+2. GitHub REST API로 저장소 목록을 가져옵니다.
+3. 프로젝트 데이터의 `link`가 GitHub URL이면 저장소명을 추출합니다.
+4. 질문에 `GitHub`, `스타`, `커밋`, `언어` 등이 있으면 GitHub API를 호출합니다.
+5. API 결과를 LLM 프롬프트에 함께 넣어 답변합니다.
+
+### 힌트
+
+```python
+import httpx
+
+async def fetch_github_repos(username: str):
+    url = f"https://api.github.com/users/{username}/repos"
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+        response.raise_for_status()
+        return response.json()
+```
+
+GitHub API 한도에 걸릴 수 있으므로 선택적으로 토큰을 사용할 수 있습니다.
+
+```env
+GITHUB_USERNAME=your_username
+GITHUB_TOKEN=your_token_optional
+```
+
+### 평가 기준
+
+- GitHub API에서 실제 데이터를 가져온다.
+- 스타 수, 언어, 최근 업데이트 등 실시간 정보가 답변에 들어간다.
+- GitHub 관련 질문과 일반 프로젝트 질문의 처리 방식이 구분된다.
+- API 실패 시 사용자에게 적절한 오류 메시지를 보여준다.
+
+---
+
+## 선택 과제 5: 관리자 페이지
+
+**난이도:** ⭐⭐⭐⭐
+
+### 목표
+
+포트폴리오 주인이 웹에서 프로젝트를 추가, 수정, 삭제할 수 있는 관리자 페이지를 만듭니다.
+
+예시 기능:
+
+```text
+프로젝트 추가
+프로젝트 설명 수정
+프로젝트 삭제
+projects.json 재생성
+RAG 인덱스 재빌드
+```
+
+### 산출물
+
+- 관리자 페이지 UI
+- 프로젝트 CRUD API
+- 수정된 프로젝트 데이터 저장
+- 변경 후 RAG 재빌드 안내 또는 자동 재빌드
+
+예상 API:
+
+```text
+GET /admin/projects
+POST /admin/projects
+PUT /admin/projects/{project_id}
+DELETE /admin/projects/{project_id}
+POST /admin/rebuild-index
+```
+
+### 구현 예상 파일
+
+- `server/api.py`
+- `server/admin.py`
+- `data/projects.json`
+- `web/admin.html`
+- `web/admin.js`
+- `web/style.css`
+
+### 구현 시나리오
+
+1. 관리자 페이지 `web/admin.html`을 만듭니다.
+2. 프로젝트 목록을 불러와 표나 카드로 보여줍니다.
+3. 추가/수정 폼을 만듭니다.
+4. 서버에서 `projects.json`을 수정합니다.
+5. 수정 후 RAG 인덱스를 다시 만들어야 한다는 안내를 표시합니다.
+
+### 힌트
+
+간단한 수업 버전에서는 로그인 대신 관리자 토큰을 사용할 수 있습니다.
+
+```env
+ADMIN_TOKEN=my-secret-token
+```
+
+```python
+from fastapi import Header, HTTPException
+
+def verify_admin(x_admin_token: str | None = Header(default=None)):
+    if x_admin_token != os.getenv("ADMIN_TOKEN"):
+        raise HTTPException(status_code=401, detail="관리자 권한이 없습니다.")
+```
+
+프론트엔드 요청:
+
+```javascript
+await fetch(`${API_BASE_URL}/admin/projects`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Admin-Token': adminToken
+  },
+  body: JSON.stringify(project)
+});
+```
+
+### 평가 기준
+
+- 관리자 페이지에서 프로젝트를 추가할 수 있다.
+- 추가한 프로젝트가 웹 프로젝트 목록에 표시된다.
+- 수정/삭제가 서버 파일에 반영된다.
+- 관리자 토큰 없이 수정 API를 호출하면 거부된다.
+- RAG 인덱스를 다시 만들어야 한다는 흐름을 설명할 수 있다.
+
+---
+
+## 선택 과제 난이도 요약
+
+| 과제 | 난이도 | 중심 영역 | 추천 대상 |
+|---|---:|---|---|
+| 질문 라우팅 시스템 | ⭐⭐⭐ | RAG / LLM | 챗봇 동작을 똑똑하게 나누고 싶은 학생 |
+| 방명록 기록 | ⭐⭐ | 백엔드 / 파일 저장 | 서버 API를 처음 확장해보고 싶은 학생 |
+| 프로젝트 좋아요, 조회수 | ⭐⭐ | 풀스택 | 웹과 서버 연동을 연습하고 싶은 학생 |
+| GitHub API 연동 + Tool Use | ⭐⭐⭐⭐ | 외부 API / LLM | 실시간 데이터를 답변에 넣고 싶은 학생 |
+| 관리자 페이지 | ⭐⭐⭐⭐ | 풀스택 / CRUD | 포트폴리오를 직접 관리하는 도구를 만들고 싶은 학생 |
+
+---
+
+## 추천 조합
+
+처음 도전하는 경우:
+
+```text
+방명록 기록 + 프로젝트 좋아요/조회수
+```
+
+챗봇을 더 똑똑하게 만들고 싶은 경우:
+
+```text
+질문 라우팅 시스템 + GitHub API 연동
+```
+
+서비스처럼 완성하고 싶은 경우:
+
+```text
+관리자 페이지 + 프로젝트 좋아요/조회수
+```
+
+---
+
+## 추가 아이디어
+
+아래 항목들은 위의 5개 선택 과제 외에 더 해보고 싶은 학생을 위한 아이디어입니다.
+
+---
+
+## 📂 분야별 추가 아이디어
 
 ### 🎨 프론트엔드 중심
 
@@ -1133,5 +1613,3 @@ class ABTest:
 - 프롬프트 A vs B
 - 카드 레이아웃 A vs B
 - 색상 테마 A vs B
-
--

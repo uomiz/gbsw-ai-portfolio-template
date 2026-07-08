@@ -1,0 +1,36 @@
+"""
+실습 2: 문서 분할
+"""
+
+import importlib.util
+from pathlib import Path
+
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+
+def _load_step01():
+    path = Path(__file__).resolve().parent / "01_load_docs.py"
+    spec = importlib.util.spec_from_file_location("step01_load_docs", path)
+    module = importlib.util.module_from_spec(spec)
+    if spec.loader is None:
+        raise RuntimeError("01_load_docs.py를 불러올 수 없습니다.")
+    spec.loader.exec_module(module)
+    return module
+
+
+def split_documents():
+    docs = _load_step01().load_documents()
+
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=300,
+        chunk_overlap=50,
+    )
+    chunks = splitter.split_documents(docs)
+
+    return docs, chunks
+
+
+if __name__ == "__main__":
+    docs, chunks = split_documents()
+    print("분할 전:", len(docs), "-> 분할 후:", len(chunks))
+

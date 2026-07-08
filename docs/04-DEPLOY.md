@@ -229,7 +229,7 @@ curl -X POST https://your-app.onrender.com/chat \
 2. Actions 탭에서 배포 성공 여부 확인
 3. `web/` 폴더에 `index.html` 존재 확인
 
-### CORS 에러 (브라우저 콘솔)
+### `CORS` 에러 (브라우저 콘솔)
 
 **증상:**
 ```
